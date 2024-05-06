@@ -257,6 +257,28 @@ public class DevBoxProvider : IComputeSystemProvider
         return new ComputeSystemAdaptiveCardResult(exception, Resources.GetResource(Constants.DevBoxMethodNotImplementedKey), exception.Message);
     }
 
+    private async Task FilterProjectsAsync(DevBoxProjects projects, IDeveloperId developerId)
+    {
+        var devBoxProjects = new List<DevBoxProject>();
+        var devBoxProjectAndPools = new List<DevBoxProjectAndPoolContainer>();
+
+        foreach (var project in projects.Data!)
+        {
+            try
+            {
+                var properties = project.Properties;
+                var uri = $"{properties.DevCenterUri}{Constants.Projects}/{project.Name}/users/me/abilities?{Constants.APIVersion}";
+                var result = await _devBoxManagementService.HttpsRequestToManagementPlane(new Uri(uri), developerId, HttpMethod.Get, null);
+                var rawResponse = result.JsonResponseRoot.ToString();
+                _log.Debug($"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Response from abilities: {rawResponse}");
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, $"Unable to get pools for {project.Name}");
+            }
+        }
+    }
+
     private async Task<DevBoxProjects> GetDevBoxProjectsAsync(IDeveloperId developerId)
     {
         _log.Information($"Attempting to get all projects for {developerId?.LoginId ?? "null"}");
@@ -282,6 +304,8 @@ public class DevBoxProvider : IComputeSystemProvider
 
         _log.Debug($"--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------> Time after ARM: {timer.ElapsedMilliseconds} ms");
 
+        // Filter out projects that don't permissions to create Dev Boxes
+        await FilterProjectsAsync(devBoxProjects!, developerId);
         _devBoxProjectsMap.Add(uniqueUserId, devBoxProjects!);
         return devBoxProjects!;
     }
