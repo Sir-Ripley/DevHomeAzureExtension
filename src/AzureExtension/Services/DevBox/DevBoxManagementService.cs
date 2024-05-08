@@ -104,6 +104,9 @@ public class DevBoxManagementService : IDevBoxManagementService
             }
         });
 
+        // Sort the mapping by project name
+        projectsToPoolsMapping = new(projectsToPoolsMapping.OrderBy(x => x.Project?.Name));
+
         _projectAndPoolContainerMap.Add(uniqueUserId, projectsToPoolsMapping.ToList());
         return projectsToPoolsMapping.ToList();
     }

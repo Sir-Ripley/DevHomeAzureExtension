@@ -268,7 +268,7 @@ public class DevBoxProvider : IComputeSystemProvider
             {
                 var properties = project.Properties;
                 var uri = $"{properties.DevCenterUri}{Constants.Projects}/{project.Name}/users/me/abilities?{Constants.APIVersion}";
-                var result = await _devBoxManagementService.HttpsRequestToManagementPlane(new Uri(uri), developerId, HttpMethod.Get, null);
+                var result = await _devBoxManagementService.HttpsRequestToDataPlane(new Uri(uri), developerId, HttpMethod.Get, null);
                 var rawResponse = result.JsonResponseRoot.ToString();
                 _log.Debug($"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Response from abilities: {rawResponse}");
             }
@@ -305,8 +305,8 @@ public class DevBoxProvider : IComputeSystemProvider
         _log.Debug($"--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------> Time after ARM: {timer.ElapsedMilliseconds} ms");
 
         // Filter out projects that don't permissions to create Dev Boxes
-        await FilterProjectsAsync(devBoxProjects!, developerId);
-        _devBoxProjectsMap.Add(uniqueUserId, devBoxProjects!);
+        // await FilterProjectsAsync(devBoxProjects!, developerId);
+        // _devBoxProjectsMap.Add(uniqueUserId, devBoxProjects!);
         return devBoxProjects!;
     }
 
