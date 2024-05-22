@@ -305,8 +305,8 @@ public class DevBoxProvider : IComputeSystemProvider
         _log.Debug($"--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------> Time after ARM: {timer.ElapsedMilliseconds} ms");
 
         // Filter out projects that don't permissions to create Dev Boxes
-        // await FilterProjectsAsync(devBoxProjects!, developerId);
-        // _devBoxProjectsMap.Add(uniqueUserId, devBoxProjects!);
+        await FilterProjectsAsync(devBoxProjects!, developerId);
+
         return devBoxProjects!;
     }
 
